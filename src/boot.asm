@@ -10,20 +10,6 @@ times 33 db 0
 start:
     jmp 0x7C0:step2
 
-handle_zero:
-    mov ah, 0eh
-    mov al, 'A'
-    mov bx, 0x00
-    int 0x10
-    iret 
-
-handle_one:
-    mov ah, 0eh
-    mov al, 'V'
-    mov bx, 0x00
-    int 0x10
-    iret
-
 step2:
     cli     ; Clear interrupts
     sti     ; Enable interrupts
@@ -34,18 +20,23 @@ step2:
     mov ss, ax
     mov sp, 0x7C00
     sti     ; Enable interrupts
-    mov si, message
 
-    mov word[ss:0x00], handle_zero
-    mov word[ss:0x02], 0x7C0
+    mov ah, 2 ; Read sector command
+    mov al, 1 ; One sector to read
+    mov ch, 0 ; Cylindey low eigth bits
+    mov cl, 2 ; Read sector two
+    mov dh, 0 ; Head number
+    mov bx, buffer 
+    int 0x13
+    jc error
 
-    mov word[ss:0x04], handle_one
-    mov word[ss:0x06], 0x7C0
+    mov si, buffer
+    call print
+    
+    jmp $
 
-    ; int 0
-    int 1
-
-    mov si, message
+error:
+    mov si, error_message
     call print
     jmp $
 
@@ -65,8 +56,10 @@ print_char:
     int 0x10
     ret
 
-message: db 'Hello World!', 0
+error_message: db 'Failed to load sector', 0
 
 times 510-($-$$) db 0
 
 dw 0xAA55
+
+buffer: db 'Hello world!'
