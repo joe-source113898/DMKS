@@ -37,7 +37,7 @@ gdt_null:
     dd 0x0
 
 ; offset 0x8
-gdt_code:     ; CS should pOINT to this
+gdt_code:     ; CS should point to this
     dw 0xffff ; Segment limit first 0-15 bits
     dw 0      ; Base first 0-15 bits
     db 0      ; Base 16-23 bits
