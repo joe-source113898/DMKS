@@ -14,13 +14,13 @@ start:
     jmp 0:step2
 
 step2:
-    cli ; Clear Interrupts
+    cli ; Clear interrupts
     mov ax, 0x00
     mov ds, ax
     mov es, ax
     mov ss, ax
     mov sp, 0x7c00
-    sti ; Enables Interrupts
+    sti ; Enables interrupts
 
 .load_protected:
     cli
